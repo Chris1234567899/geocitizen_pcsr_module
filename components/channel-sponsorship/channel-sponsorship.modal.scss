@@ -1,0 +1,84 @@
+.center{
+  text-align: center;
+}
+.paypal-wrapper {
+  padding: 20px;
+  background: white;
+  max-width: 350px;
+  margin: auto;
+}
+
+.pricing-plans{
+
+
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+}
+
+.pricing{
+  text-align: center;
+
+
+
+  .heading{
+    font-weight: bold;
+    font-size: 1.4em;
+    font-family: serif;
+  }
+  h2{
+ 
+    font-size: 2.4em;
+    font-weight: bold;
+    padding: 8px;
+    padding-bottom: 4px    ;
+  }
+  .best-value{
+    color:var(--ion-color-gold);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    ion-icon{
+      margin-inline-end: 12px;
+    }
+  }
+
+  .save-price{
+    color:var(--ion-color-gold);
+  }
+
+  .set-price{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    .amount{
+      font-size: 1.6em;
+      padding: 10px;
+    }
+  }
+}
+.selected{
+  border: 4px solid var(--ion-color-primary);
+  box-sizing: border-box;
+
+  .heading{
+    color:var(--ion-color-primary);
+  }
+}
+
+.paid{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  height: 100%;
+  ion-icon{
+    font-size: 4em;
+  }
+}
+.danger{
+  color: var(--ion-color-danger);
+}

@@ -1,0 +1,148 @@
+<ion-header>
+  <ion-toolbar color="light">
+    <ion-title>{{ "basic.manage-pricing" | translate }}</ion-title>
+
+    <ion-buttons slot="end">
+      <ion-button (click)="close()">
+        <ion-icon name="close"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+<ion-content class="ion-padding">
+  <form (submit)="pricingForm.form.valid && updatePricing()" #pricingForm="ngForm">
+
+    <ion-list>
+
+
+      <ion-item>
+        <ion-checkbox slot="start" name="is_gratis" [value]="channel.channel_pricing.is_gratis"
+          [(ngModel)]="channel.channel_pricing.is_gratis">
+        </ion-checkbox>
+        {{"basic.is-gratis-channel" | translate}}
+      </ion-item>
+
+      <section *ngIf="!channel.channel_pricing.is_gratis">
+
+        <ion-item>
+
+          <ion-label class="ion-text-wrap">{{"basic.price-per-day" | translate}}*</ion-label>
+          <input class="currency-input" slot="end" currencyMask #per_day="ngModel"
+            [(ngModel)]="channel.channel_pricing.price_per_day" name="per_day" [options]="{ 
+          prefix: channel.channel_pricing.currency_short, 
+          thousands: '.', 
+          decimal: ',',
+          nullable: false,
+          allowNegative: false,
+          allowZero: false,
+          min: 0.01
+       }" [class.invalid]="!per_day.valid" />
+        </ion-item>
+
+
+
+
+        <ion-item>
+
+          <ion-label class="ion-text-wrap">{{"basic.price-per-month" | translate}}*</ion-label>
+          <input class="currency-input" slot="end" currencyMask #per_month="ngModel"
+            [(ngModel)]="channel.channel_pricing.price_per_month" name="per_month" [options]="{ 
+          prefix: channel.channel_pricing.currency_short, 
+          thousands: '.', 
+          decimal: ',',
+          nullable: false,
+          allowNegative: false,
+          allowZero: false,
+          min: 0.01
+       }" [class.invalid]="!per_month.valid" />
+        </ion-item>
+
+        <ion-item lines="none" class="small-item">
+          <ion-label class="ion-text-end ion-text-wrap save-price">
+            <small>
+              {{"basic.pricing-save" | translate:
+              {'sum': (1 - (channel.channel_pricing.price_per_month / (channel.channel_pricing.price_per_day * 31))) *
+              100
+              | number : '1.0-0' }
+              }}
+            </small>
+          </ion-label>
+        </ion-item>
+
+        <ion-item>
+
+          <ion-label class="ion-text-wrap">{{"basic.price-per-year" | translate}}*</ion-label>
+          <input class="currency-input" slot="end" currencyMask #per_year="ngModel"
+            [(ngModel)]="channel.channel_pricing.price_per_year" name="per_year" [options]="{ 
+          prefix: channel.channel_pricing.currency_short, 
+          thousands: '.', 
+          decimal: ',',
+          nullable: false,
+          allowNegative: false,
+          allowZero: false,
+          min: 0.01
+       }" [class.invalid]="!per_year.valid" />
+        </ion-item>
+
+        <ion-item lines="none" class="small-item">
+          <ion-label class="ion-text-end ion-text-wrap save-price">
+            <small>
+              {{"basic.pricing-save" | translate:
+              {'sum': (1 - (channel.channel_pricing.price_per_year / (channel.channel_pricing.price_per_day * 365))) *
+              100
+              | number : '1.0-0' }
+              }}
+            </small>
+          </ion-label>
+        </ion-item>
+
+        <ion-item>
+          <ion-label class="ion-text-end ion-text-wrap">
+            <small>
+              *{{"basic.pricing-currency" | translate : {'curr':channel.channel_pricing.currency } }}
+            </small>
+          </ion-label>
+        </ion-item>
+
+
+
+        <ion-item>
+          <ion-label class="ion-text-wrap">
+            {{"basic.min-renewal-time" | translate}}
+          </ion-label>
+        </ion-item>
+        <div class="renewal-line">
+
+          <ion-item>
+            <ion-input style="text-align: center;" name="min_renewal_amount" #min_renewal_amount="ngModel"
+              [numberBetween]="[1, 31]" [min]="1" [max]="31" required type="number"
+              [(ngModel)]="channel.channel_pricing.min_renewal_amount" [class.invalid]="!min_renewal_amount.valid">
+            </ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-select name="min_renewal_type" [(ngModel)]="channel.channel_pricing.min_renewal_type">
+              <ion-select-option value="DAY">{{"basic.pricing-days" | translate}}</ion-select-option>
+              <ion-select-option value="MONTH">{{"basic.pricing-months" | translate}}</ion-select-option>
+              <ion-select-option value="YEAR">{{"basic.pricing-years" | translate}}</ion-select-option>
+            </ion-select>
+          </ion-item>
+        </div>
+
+
+
+
+      </section>
+
+
+
+
+
+    </ion-list>
+
+    <ion-button expand="block" [class.invalid-bt]="!pricingForm.form.valid" type="submit">
+      {{ "basic.save" | translate }}
+    </ion-button>
+  </form>
+
+
+</ion-content>

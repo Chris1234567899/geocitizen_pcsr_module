@@ -1,0 +1,70 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="home"></ion-back-button>
+    </ion-buttons>
+    <ion-title>{{"basic.businesses" | translate}}
+
+      <p class="subtitle" *ngIf="locationName">
+
+        {{ locationName }}
+      </p>
+    </ion-title>
+
+    <ion-buttons slot="end">
+      <ion-button fill="clear" (click)="getBusinesses(null,false)">
+        <ion-icon *ngIf="!positioning" name="locate"></ion-icon>
+        <ion-spinner *ngIf="positioning"></ion-spinner>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+
+
+<ion-content>
+  <div class="screen-max">
+    <ion-refresher slot="fixed" (ionRefresh)="getBusinesses($event,false)">
+      <ion-refresher-content>
+      </ion-refresher-content>
+    </ion-refresher>
+
+    <ion-searchbar [placeholder]="'basic.search-business' | translate" animated="true" animated
+      (ionCancel)="cancelSearch()" (ionInput)="searchBusinesses($event)"
+      [(ngModel)]="searchString">
+    </ion-searchbar>
+
+
+
+    <ion-item class="ion-text-center" lines="none" *ngIf="loading">
+      <ion-label>
+        <ion-spinner></ion-spinner>
+      </ion-label>
+    </ion-item>
+
+
+    <no-content-card *ngIf="!loading && (!businesses || businesses.length == 0)"
+      [header]="'basic.no-businesses' | translate" [desc]="'basic.no-businesses-desc' | translate">
+    </no-content-card>
+    <ion-list>
+      <ion-item *ngFor="let business of businesses" button detail (click)="openBusiness(business)">
+
+        <ion-thumbnail slot="start">
+          <img *ngIf="business.logo_image_url" [src]="business.logo_image_url">
+        </ion-thumbnail>
+        <ion-label class="ion-text-wrap">
+          {{business.name}}
+          <p *ngIf="business.location">{{business.location}}</p>
+
+
+        </ion-label>
+
+
+      </ion-item>
+      <ion-infinite-scroll [infiniteFix]="businesses" (ionInfinite)="doInfinite($event)">
+        <ion-infinite-scroll-content loadingSpinner="bubbles"></ion-infinite-scroll-content>
+      </ion-infinite-scroll>
+    </ion-list>
+
+  </div>
+</ion-content>

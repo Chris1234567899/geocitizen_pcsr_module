@@ -1,0 +1,26 @@
+<ion-header>
+  <ion-toolbar color="light">
+
+    <ion-title >{{ "basic.post-type-sponsorship" | translate }}</ion-title>
+
+
+    <ion-buttons slot="end">
+      <ion-button (click)="close()">
+        <ion-icon name="close"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+<ion-content class="ion-padding">
+  <div class="wrapper">
+  
+    <post-form [parentPost]="parentPost" [post]="post" [postType]="postType.SPONSORSHIP" 
+    [channel]="channel"
+      [placeholder]="'basic.sponsor-pl' | translate" 
+      (onSaved)="onPostSaved($event)" (onCancel)="onEditCancel()">
+    </post-form>
+    <p>
+      {{ "basic.post-sponsorship-desc" | translate }}
+    </p>
+  </div>
+</ion-content>

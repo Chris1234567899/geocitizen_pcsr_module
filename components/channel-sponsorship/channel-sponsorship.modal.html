@@ -1,0 +1,130 @@
+<ion-header>
+    <ion-toolbar color="light">
+
+        <ion-title>{{ "basic.support-channel" | translate }}</ion-title>
+
+        <ion-buttons slot="end">
+            <ion-button (click)="close()">
+                <ion-icon name="close"></ion-icon>
+            </ion-button>
+        </ion-buttons>
+    </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding center" *ngIf="paid">
+    <div class="paid">
+        <ion-icon color="primary" name="checkmark-done-circle"></ion-icon>
+        <h1>
+            {{"basic.support-received" | translate}}
+        </h1>
+        <p>
+            {{"basic.support-received-desc" | translate}}
+        </p>
+        <ion-button (click)="close()">{{"basic.close" | translate}}</ion-button>
+    </div>
+</ion-content>
+<ion-content class="ion-padding center" *ngIf="!paid">
+    <frozen-channel-card [channel]="channel" [hideSupport]="true"></frozen-channel-card>
+    <p>{{"basic.pricings-desc" | translate: {date: channel.channel_pricing.supported_until| date} }}</p>
+
+    <h2>
+        {{ "basic.pricing-choose-plan" | translate }}
+    </h2>
+
+    
+    <p *ngIf="channel.is_frozen" class="danger">
+
+        {{"basic.unfreeze-amount-"+channel.channel_pricing.min_renewal_type | translate: {'amount':channel.channel_pricing.min_renewal_amount} }}
+
+   
+    </p>
+
+
+    <section class="pricing-plans">
+        <ion-card button class="pricing" *ngFor="let pricing of pricings" [disabled]="pricing.disabled"
+            [ngClass]="{'selected':pricing == selectedPricing}" (click)="selectPricing(pricing)">
+
+            <ion-card-header>
+                <span class="heading">{{"basic.pricing-"+pricing.time | translate }}</span>
+
+                <div class="best-value" *ngIf="pricing.time == 'YEAR'">
+                    <ion-icon name="sparkles"></ion-icon>
+                    {{"basic.pricing-best" | translate }}
+                </div>
+            </ion-card-header>
+            <ion-card-content>
+                <h2>
+                    <sup class="superscript">{{channel.channel_pricing.currency_short}}</sup>
+                    <span class="plan-price">{{pricing.price}}</span>
+                    <sub>{{"basic.pricing-short-"+pricing.time | translate }}</sub>
+                </h2>
+                <p class="save-price" *ngIf="pricing.save">
+                    {{"basic.pricing-save" | translate:
+                    {'sum': pricing.save | number : '1.0-0' }
+                    }}
+                </p>
+
+                <section>
+                    <p>
+                        {{"basic.pricing-desc-"+pricing.time | translate }}
+                    </p>
+                </section>
+
+                <section *ngIf="pricing == selectedPricing">
+
+
+                    <div class="set-price">
+                        <ion-button fill="clear" (click)="setAmount($event,-1)">
+                            <ion-icon name="remove"></ion-icon>
+                        </ion-button>
+
+                        <span class="amount">
+                            {{"basic.pricing-time-"+pricing.time | translate: {'amount':pricing.amount} }}
+                        </span>
+
+                        <ion-button fill="clear" (click)="setAmount($event,1)">
+                            <ion-icon name="add"></ion-icon>
+                        </ion-button>
+                    </div>
+
+                    <div>
+                        {{"basic.pricing-total" | translate: {'amount':pricing.amount * pricing.price,
+                        'curr':channel.channel_pricing.currency} }}
+                    </div>
+                </section>
+
+
+
+            </ion-card-content>
+
+        </ion-card>
+
+    </section>
+
+    <p>
+        {{"basic.current-end" | translate: {date: channel.channel_pricing.supported_until| date } }}
+        <br>
+        <span [innerHTML]="'basic.supported-end' | translate: {
+            total:selectedPricing.amount * selectedPricing.price,
+            curr:channel.channel_pricing.currency,
+            date: endingDate| date }"></span>
+
+      
+
+    </p>
+
+
+
+
+
+
+
+
+
+
+
+    <div class="paypal-wrapper" #paypal>
+
+    </div>
+
+</ion-content>

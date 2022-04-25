@@ -1,0 +1,168 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="home"></ion-back-button>
+    </ion-buttons>
+    <ion-title> {{"basic.business-account" | translate}}</ion-title>
+    <ion-buttons *ngIf="canEdit" slot="end">
+      <ion-button (click)="editBusiness()">
+        <ion-icon name="create"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content *ngIf="business">
+  <div class="screen-max">
+    <div class="header-img-wrapper" *ngIf="business.cover_image_url || business.logo_image_url">
+      <img class="cover-img" *ngIf="business.cover_image_url"
+        [src]="business.cover_image_url.replace('thumbnail','large')">
+      <div class="logo" *ngIf="business.logo_image_url">
+        <img [src]="business.logo_image_url.replace('thumbnail','large')">
+      </div>
+    </div>
+
+
+    <ion-item>
+      <ion-label class="ion-text-wrap">
+        <h1>
+          {{business.name}}
+        </h1>
+      </ion-label>
+    </ion-item>
+
+    <ion-item *ngIf="business.description">
+      <ion-label class="ion-text-wrap">
+        <p>
+          {{business.description}}
+        </p>
+      </ion-label>
+    </ion-item>
+
+    <ion-item-group>
+      <ion-item-divider>
+        <ion-label>{{"basic.members" | translate}}</ion-label>
+      </ion-item-divider>
+
+
+
+      <ion-searchbar *ngIf="canEdit" [placeholder]="'basic.invite-user' | translate" (ionCancel)="cancelSearch()"
+        (ionInput)="searchUsers($event)">
+      </ion-searchbar>
+
+
+
+
+      <ion-item *ngFor="let member of currentMemberships">
+        <ion-avatar slot="start" class="avatar-container ">
+          <a (click)="openPeople(member.user_rel)">
+            <img *ngIf="member.user_rel?.avatar_url" [src]="member.user_rel?.avatar_url"
+              onerror="this.onerror=null;this.src='assets/img/avatar.svg'" />
+            <img *ngIf="!member.user_rel?.avatar_url" src="assets/img/avatar.svg" />
+          </a>
+        </ion-avatar>
+        <ion-label class="ion-text-wrap">
+          <a (click)="openPeople(member.user_rel)">
+            {{member.user_rel?.display_name}}
+          </a>
+          <br>
+          <span [ngClass]="member.status" *ngIf="member.status != 'accepted' && member.business_id == business.id">
+            {{ "basic.business-membership-"+member.status| translate}}
+          </span>
+
+          <span *ngIf="member.business_id != business.id" class="blocked">
+            {{ "basic.business-double-membership"| translate}}
+          </span>
+        </ion-label>
+
+        <div class="user-role" slot="end" *ngIf="member.business_role == 'admin' && member.business_id == business.id">
+          {{ "basic.business-role-admin"| translate}}
+        </div>
+
+
+        <ion-button shape="round" (click)="leaveBusiness()" slot="end" *ngIf="member.user_id == membership?.user_id 
+        && member.user_id != business.user_id
+        && member.status!='blocked'
+        && member.business_id == business.id">
+          {{"basic.leave-business" | translate}}
+        </ion-button>
+
+        <ion-button shape="round" (click)="joinBusiness()" slot="end" *ngIf="member.user_id == membership?.user_id 
+        && member.status=='invited'
+        && member.business_id == business.id">
+          {{"basic.accept-invitation" | translate}}
+        </ion-button>
+
+        <ion-button *ngIf="canEdit && member.user_id != business.user_id
+        && membership?.user_id != member.user_id
+        && member.business_id == business.id" fill="clear" slot="end" (click)="manageMember($event,member)">
+          <ion-icon name="ellipsis-vertical"></ion-icon>
+        </ion-button>
+      </ion-item>
+
+      <ion-item lines="none" *ngIf="!membership && user && !user.business">
+        <ion-button slot="end" shape="round" (click)="joinBusiness()">
+          {{"basic.join-business" | translate}}
+        </ion-button>
+      </ion-item>
+
+
+
+
+    </ion-item-group>
+
+    <ion-item-group>
+      <ion-item-divider>
+        <ion-label>{{"basic.contact" | translate}}</ion-label>
+      </ion-item-divider>
+
+      <ion-item *ngIf="business.email">
+        <ion-icon slot="start" name="at"></ion-icon>
+        <ion-label class="ion-text-wrap">
+          <a [href]="'mailto:'+business.email">
+          {{business.email}}
+          </a>
+        </ion-label>
+      </ion-item>
+      <ion-item *ngIf="business.phone">
+        <ion-icon slot="start" name="call"></ion-icon>
+        <ion-label class="ion-text-wrap">
+          <a [href]="'tel:'+business.phone">
+            {{business.phone}}
+          </a>
+        </ion-label>
+      </ion-item>
+
+      <ion-item *ngIf="business.webpage">
+        <ion-icon slot="start" name="globe"></ion-icon>
+        <ion-label class="ion-text-wrap">
+
+          <a [href]="business.webpage" target="_blank">
+            {{business.webpage}}
+          </a>
+
+
+        </ion-label>
+      </ion-item>
+
+      <ion-item *ngIf="business.location">
+        <ion-icon slot="start" name="location"></ion-icon>
+        <ion-label class="ion-text-wrap">
+
+          {{business.location}}
+
+        </ion-label>
+      </ion-item>
+      <ion-item *ngIf="business.address">
+        <ion-icon slot="start" name="map"></ion-icon>
+        <ion-label class="ion-text-wrap">
+
+          {{business.address}}
+
+        </ion-label>
+      </ion-item>
+
+
+    </ion-item-group>
+  </div>
+</ion-content>

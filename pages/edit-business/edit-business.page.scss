@@ -1,0 +1,64 @@
+.header-img-wrapper {
+    width: 100%;
+    height: 35vw;
+    position: relative;
+    min-height: 180px;
+    .cover-img {
+        height: calc(100% - 75px);
+        width: 100%;
+        position: absolute;
+        background-repeat: no-repeat;
+        background-position: center;
+        background-size: cover;
+        border-bottom: 2px solid;
+        .add-cover {
+            position: absolute;
+            right: 4px;
+            top: 4px;
+            z-index: 1;
+        }
+    }
+    .logo {
+        position: absolute;
+        bottom: 0;
+        width: 150px;
+        height: 150px;
+
+        margin: auto;
+        left: 0;
+        right: 0;
+    
+
+        display: flex;
+        align-items: flex-end;
+        justify-content: center;
+
+        .add-logo{
+            position: absolute;
+            transform: translate(50%, 50%);
+        }
+
+        .logo-image-wrapper {
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: cover;
+            height: 100%;
+            width: 150px;
+            border: 2px solid;
+            border-radius: 50%;
+            background-color: var(--ion-color-light);
+        }
+    }
+}
+
+.similar-businesses{
+    background: rgba(0,0,0,0.1);
+    padding: 20px;
+    position: relative;
+
+    .close-btn{
+        position: absolute;
+        right: 0;
+        top: 0;
+    }
+}

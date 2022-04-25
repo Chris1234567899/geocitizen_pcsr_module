@@ -1,0 +1,110 @@
+<ion-header>
+    <ion-toolbar color="light">
+        <ion-title>
+
+            <span *ngIf="writeMode=='new'">
+                {{ "basic.create-label" | translate }}
+            </span>
+            <span *ngIf="writeMode=='edit'">
+                {{ "basic.edit-label" | translate }}
+            </span>
+
+
+        </ion-title>
+
+        <ion-buttons slot="end">
+
+            <translate-buttons #translateButtons [availableLanguages]="channel?.languages" [languages]="labelLanguages"
+                (onAddLanguage)="onAddLanguage($event)" (onRemoveLanguage)="onRemoveLanguage($event)"
+                (onLanguageSelected)="onLanguageSelected($event)">
+            </translate-buttons>
+
+            <ion-button color="danger" (click)="delete()">
+                <ion-icon name="trash"></ion-icon>
+            </ion-button>
+            <ion-button (click)="close()">
+                <ion-icon name="close"></ion-icon>
+            </ion-button>
+        </ion-buttons>
+    </ion-toolbar>
+</ion-header>
+<ion-content>
+
+
+    <form (submit)="labelForm.form.valid && submitLabelForm()" #labelForm="ngForm">
+
+        <color-picker name="color" [(ngModel)]="label.color" [label]="'basic.color' | translate">
+        </color-picker>
+
+        <ion-item lines="none">
+            <ion-label position="stacked">
+                {{ "basic.label" | translate }}
+                <span class="required-hint">*</span>
+            </ion-label>
+            <div class="translation-container">
+                <div class="translation-wrapper" *ngFor="let translation of label.translations">
+                    <div class="translation-item" [hidden]="
+                            selectedLanguage && translation.locale != selectedLanguage
+                          ">
+                        <ion-item lines="inset" class="ion-no-padding">
+                            <ion-button slot="start" *ngIf="allowLanguageManipulation && labelLanguages.length > 1" class="ion-no-padding" size="small"
+                                fill="clear" color="danger" (click)="askForLanguageRemoval(translation.locale)">
+                                <ion-icon name="remove-circle"></ion-icon>
+                            </ion-button>
+                            <ion-label *ngIf="labelLanguages.length > 1" class="locale-label">
+                               {{ translation.locale | uppercase }}
+                            </ion-label>
+                            <ion-input type="text" required maxLength="64" autocorrect="on" autocapitalize="on"
+                                spellcheck="true" id="label" name="label{{ translation.locale }}" #label="ngModel"
+                                [(ngModel)]="translation.label" [class.invalid]="!label.valid">
+                            </ion-input>
+                        </ion-item>
+                        <div class="translation-error invalid-text" *ngIf="label.errors && !label.pristine">
+                            <span *ngFor="let error of (label.errors | keys)">
+                                {{ "basic.form-" + error | translate }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </ion-item>
+        <ion-item lines="none" *ngIf="allowLanguageManipulation && channel.languages.length>1">
+            <ion-button size="small" type="button" fill="clear" slot="start"
+                (click)="translateButtons.addTranslation()">
+                <ion-icon name="add-circle" slot="start"></ion-icon>
+                {{ "basic.add-language" | translate }}
+            </ion-button>
+        </ion-item>
+
+
+
+        <ion-item lines="none">
+            <ion-label position="stacked">
+                {{ "basic.label-description" | translate }}
+            </ion-label>
+            <div class="translation-container">
+                <div class="translation-wrapper" *ngFor="let translation of label.translations">
+                    <div class="translation-item" [hidden]="
+                              selectedLanguage && translation.locale != selectedLanguage
+                            ">
+                        <ion-item lines="inset" class="ion-no-padding">
+                            <ion-label *ngIf="labelLanguages.length > 1" class="locale-label">
+                                {{ translation.locale | uppercase }}
+                            </ion-label>
+                            <ion-textarea rows="2" type="text" maxLength="255" autocorrect="on" autocapitalize="on"
+                                spellcheck="true" id="description" [placeholder]="'basic.description' | translate"
+                                name="description{{ translation.locale }}" #description="ngModel"
+                                [(ngModel)]="translation.description">
+                            </ion-textarea>
+                        </ion-item>
+
+                    </div>
+                </div>
+            </div>
+        </ion-item>
+
+        <ion-button expand="block" [class.invalid-bt]="!labelForm.form.valid" type="submit">
+            {{"basic.save" | translate}}
+        </ion-button>
+    </form>
+</ion-content>

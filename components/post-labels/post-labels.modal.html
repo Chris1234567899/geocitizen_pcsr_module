@@ -1,0 +1,48 @@
+<ion-header>
+  <ion-toolbar color="light">
+    <ion-title>{{ "basic.manage-labels" | translate }}</ion-title>
+
+    <ion-buttons slot="end">
+
+      <ion-button (click)="close()">
+        <ion-icon name="close"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+<ion-content>
+  <ion-refresher slot="fixed" (ionRefresh)="refresh($event)">
+    <ion-refresher-content>
+    </ion-refresher-content>
+  </ion-refresher>
+  <ion-item lines="none" *ngIf="loading">
+    <ion-label class="ion-text-center">
+      <ion-spinner></ion-spinner>
+    </ion-label>
+  </ion-item>
+  <ion-list>
+   
+    <ion-item *ngFor="let label of labels">
+      <ion-avatar slot="start" [ngStyle]="{'background':label.color}"></ion-avatar>
+      <ion-label class="ion-text-wrap">
+        <h2>{{ label.label }}</h2>
+        <small>{{ label.description }}</small>
+      </ion-label>
+      <span slot="end" class="system" *ngIf="!label.channel_id">{{ "basic.system-label" | translate }}</span>
+      <ion-button slot="end" fill="clear" (click)="editLabel( label)" *ngIf="label.channel_id">
+        <ion-icon name="create"></ion-icon>
+      </ion-button>
+    </ion-item>
+  </ion-list>
+
+
+  <ion-item lines="none">
+    <ion-button fill="clear" slot="end" (click)="editLabel(null)">
+      {{ "basic.create-label" | translate }}
+    </ion-button>
+  </ion-item>
+
+
+
+
+</ion-content>

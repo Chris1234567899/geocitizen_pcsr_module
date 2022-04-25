@@ -1,0 +1,208 @@
+<ion-header>
+  <ion-toolbar color="primary">
+
+
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="home"></ion-back-button>
+    </ion-buttons>
+
+    <ion-title *ngIf="writeMode == 'new'">{{
+      "basic.create-business" | translate
+      }}
+    </ion-title>
+    <ion-title *ngIf="writeMode == 'edit'">{{
+      "basic.edit-business" | translate
+      }}
+    </ion-title>
+
+    <ion-buttons slot="end">
+
+      <ion-button *ngIf="writeMode == 'edit'" (click)="deleteBusiness()">
+        <ion-icon name="trash"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content *ngIf="business">
+  <div class="screen-max">
+    <form (submit)="businessForm.form.valid && (business.logo_image_url || logoImage) && submitBusinessForm()" #businessForm="ngForm">
+
+
+      <div class="header-img-wrapper">
+
+        <div class="cover-img"
+          [ngStyle]="{'background-image': 'url(' + getBackgroundImage('cover')?.replace('thumbnail','large') + ')'}">
+          <add-image class="add-cover" #addCoverImg (onImageData)="onImageData($event,'cover')">
+            <ion-button color="light" size="small" (click)="addCoverImg.getPicture('gallery')">
+              <ion-icon slot="start" name="camera"></ion-icon>
+            
+              <span *ngIf="coverImage || business.cover_image_url">
+                {{"basic.business-edit-cover-img" | translate}}
+            </span> 
+            <span *ngIf="!coverImage && !business.cover_image_url"> 
+                {{"basic.business-add-cover-img" | translate}}
+            </span>
+            </ion-button>
+          </add-image>
+        </div>
+        <div class="logo">
+          <add-image class="add-logo" #addLogoImg (onImageData)="onImageData($event,'logo')">
+            <ion-button color="light" size="small" (click)="addLogoImg.getPicture('gallery')">
+              <ion-icon slot="start" name="camera"></ion-icon>
+            
+              <span *ngIf="logoImage || business.logo_image_url">
+                {{"basic.business-edit-logo" | translate}}
+            </span> 
+            <span *ngIf="!logoImage && !business.logo_image_url"> 
+                {{"basic.business-add-logo" | translate}}
+                <span class="required-hint">*</span>
+            </span>
+            </ion-button>
+          </add-image>
+          <div class="logo-image-wrapper"
+            [ngStyle]="{'background-image': 'url(' + getBackgroundImage('logo')?.replace('thumbnail','large') + ')'}">
+          </div>
+        </div>
+
+      </div>
+
+
+      <ion-item-group>
+        <ion-item-divider>
+          <ion-label>{{"basic.business-details" | translate}}</ion-label>
+        </ion-item-divider>
+
+
+
+        <ion-item lines="none">
+          <ion-label position="stacked">
+            {{ "basic.form-name" | translate }}<span class="required-hint">*</span>
+          </ion-label>
+          <ion-input (input)="findSimilarBusinesses($event)" type="text" required maxLength="128" autocorrect="on" autocapitalize="on" spellcheck="true"
+            id="name" [(ngModel)]="business.name" name="name" #name="ngModel" [class.invalid]="name && !name.valid"
+            [placeholder]="'basic.business-name-pl'|translate">
+          </ion-input>
+        </ion-item>
+
+
+
+        <div class="similar-businesses" *ngIf="showSimilar">
+          <ion-button class="close-btn" fill="clear" size="small" (click)="closeSimilar()">
+            <ion-icon name="close"></ion-icon>
+          </ion-button>
+          <p>{{'basic.similar-businesses-title' | translate}}</p>
+          <p>
+            <small>
+              {{'basic.similar-businesses-info' | translate}}
+            </small>
+          </p>
+
+
+          <ion-item *ngFor="let similarBusiness of similarBusinesses" color="transparent"
+            (click)="openBusiness(similarBusiness)" button detail>
+            <ion-thumbnail slot="start">
+              <img *ngIf="similarBusiness.logo_image_url" [src]="similarBusiness.logo_image_url"
+              onerror="this.onerror=null;this.src='assets/img/avatar.svg'" />
+            </ion-thumbnail>
+            <ion-label class="ion-text-wrap">
+              {{similarBusiness.name}}
+            </ion-label>
+          </ion-item>
+        </div>
+
+
+
+
+        <ion-item lines="none">
+          <ion-label position="stacked">
+            {{ "basic.form-description" | translate }}
+          </ion-label>
+          <ion-textarea autoGrow="true" rows="4" type="text" maxLength="999" autocorrect="on" autocapitalize="on"
+            spellcheck="true" id="description" [(ngModel)]="business.description" name="description"
+            #description="ngModel" [class.invalid]="description && !description.valid"
+            [placeholder]="'basic.business-description-pl'|translate">
+          </ion-textarea>
+
+        </ion-item>
+      </ion-item-group>
+
+
+      <ion-item-group>
+        <ion-item-divider>
+          <ion-label>{{"basic.contact" | translate}}</ion-label>
+        </ion-item-divider>
+
+        <ion-item>
+          <ion-label position="stacked">
+            {{ "basic.form-email" | translate }}
+            <span class="required-hint">*</span>
+          </ion-label>
+          <ion-input inputmode="email" id="email" required 
+          pattern="^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$"
+          [(ngModel)]="business.email" name="email" #email="ngModel">
+          </ion-input>
+        </ion-item>
+
+        <ion-item>
+          <ion-label position="stacked">
+            {{ "basic.form-phone" | translate }}
+            <span class="required-hint">*</span>
+          </ion-label>
+          <ion-input inputmode="tel" id="phone" required 
+          pattern="^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\./0-9]*$"
+          [(ngModel)]="business.phone" name="phone" #phone="ngModel">
+          </ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label position="stacked">
+            {{ "basic.form-webpage" | translate }}
+          </ion-label>
+          <ion-input inputmode="url" id="webpage" [(ngModel)]="business.webpage" 
+          placeholder="https://"
+          name="webpage" #webpage="ngModel"
+          [pattern]="'((http|https)://)(www.)?[a-zA-Z0-9@:%._\\+~#?&//=]{2,256}\\.[a-z]{2,6}\\b([-a-zA-Z0-9@:%._\\+~#?&//=]*)'"
+          [class.invalid]="!webpage.valid"
+          >
+          </ion-input>
+        </ion-item>
+        <ion-item class="error-hint" lines="none" *ngIf="webpage.errors && !webpage.pristine">
+          <p >{{ "basic.invalid-url" | translate }}</p>
+        </ion-item>
+
+
+        <ion-item>
+          <ion-label position="stacked">
+            {{ "basic.form-city" | translate}}
+            <span class="required-hint">*</span>
+          </ion-label>
+          <ion-input (input)="searchLocation($event)" required name="location" [(ngModel)]="business.location">
+            
+          </ion-input>
+        </ion-item>
+        <ion-list class="search-suggestions" *ngIf="searchSuggestions">
+          <ion-item *ngFor="let sug of searchSuggestions" (click)="selectSuggestion(sug)" button>
+            <ion-icon name="pin" slot="start" *ngIf="sug.is_feature"></ion-icon>
+            {{ sug.place_name }}
+          </ion-item>
+        </ion-list>
+
+
+        <ion-item>
+          <ion-label position="stacked">
+            {{ "basic.form-address" | translate }}
+            <span class="required-hint">*</span>
+          </ion-label>
+          <ion-textarea rows="2" inputmode="text" autocorrect="on" required autocapitalize="on" spellcheck="true" id="address"
+            [(ngModel)]="business.address" name="address" #address="ngModel">
+          </ion-textarea>
+        </ion-item>
+      </ion-item-group>
+
+
+      <ion-button expand="block" [class.invalid-bt]="!businessForm.form.valid || (!business.logo_image_url && !logoImage)" type="submit">
+        {{ "basic.submit" | translate }}
+      </ion-button>
+    </form>
+  </div>
+</ion-content>

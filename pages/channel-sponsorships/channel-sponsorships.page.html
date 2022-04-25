@@ -1,0 +1,77 @@
+<ion-header>
+    <ion-toolbar color="primary">
+        <ion-buttons slot="start">
+            <ion-back-button [defaultHref]="channelSlug"></ion-back-button>
+        </ion-buttons>
+        <ion-title>{{ "basic.supporters" | translate }}</ion-title>
+
+
+    </ion-toolbar>
+</ion-header>
+<ion-content>
+
+    <ion-refresher slot="fixed" (ionRefresh)="refresh($event)">
+        <ion-refresher-content>
+        </ion-refresher-content>
+    </ion-refresher>
+    <ion-item lines="none" *ngIf="loading">
+        <ion-label class="ion-text-center">
+            <ion-spinner></ion-spinner>
+        </ion-label>
+    </ion-item>
+    <ion-list>
+
+
+
+        <ion-item *ngIf="channel && !channel.channel_pricing.is_gratis">
+            <ion-label>
+                <p>
+                    {{"basic.current-end" | translate: {date: channel.channel_pricing.supported_until| date } }}
+                </p>
+                <frozen-channel-card [channel]="channel"></frozen-channel-card>
+            </ion-label>
+        </ion-item>
+
+
+        <ion-item *ngIf="sponsorships?.length == 0 && supporters.length == 0" lines="none">
+            {{"basic.no-supporters-yet" | translate}}
+        </ion-item>
+
+        <ion-list-header *ngIf="supporters?.length > 0">
+            {{"basic.permanent-supporters" | translate}}
+        </ion-list-header>
+
+        <ion-item>
+
+            <ion-label class="supporter-wrapper">
+                <div *ngFor="let supporter of supporters" class="supporter-card">
+                    <img [src]="supporter.logo_image_url.replace('thumbnail','small')">
+                    <a *ngIf="supporter.url" [href]="supporter.url" target="_blank"></a>
+                </div>
+            </ion-label>
+
+
+        </ion-item>
+
+        <ion-list-header *ngIf="sponsorships?.length > 0">
+            {{"basic.individual-supporters" | translate}}
+        </ion-list-header>
+        <ion-item *ngFor="let sponsorship of sponsorships">
+            <user-rel [userRel]="sponsorship.user_rel">
+                <small>
+                    {{sponsorship.created_at | moment}}
+                </small>
+            </user-rel>
+            <ion-chip slot="end" disabled>
+                <ion-label>
+
+                    <small> {{sponsorship.total}} {{sponsorship.currency}}</small>
+                </ion-label>
+            </ion-chip>
+        </ion-item>
+    </ion-list>
+    <ion-infinite-scroll (ionInfinite)="doInfinite($event)">
+        <ion-infinite-scroll-content loadingSpinner="bubbles"></ion-infinite-scroll-content>
+    </ion-infinite-scroll>
+
+</ion-content>
